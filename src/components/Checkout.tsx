@@ -99,7 +99,7 @@ Please confirm this order to proceed. Thank you for choosing Chicken Station! ðŸ
     `.trim();
 
     const encodedMessage = encodeURIComponent(orderDetails);
-    const messengerUrl = `https://m.me/129877476867267?text=${encodedMessage}`;
+    const messengerUrl = `https://m.me/777625318760647?text=${encodedMessage}`;
     
     window.open(messengerUrl, '_blank');
     
