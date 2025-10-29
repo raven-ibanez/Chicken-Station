@@ -30,49 +30,56 @@ function MainApp() {
     : menuItems.filter(item => item.category === selectedCategory);
 
   return (
-    <div className="min-h-screen bg-cream-50 font-inter">
-      <Header 
-        cartItemsCount={cart.getTotalItems()}
-        onCartClick={() => handleViewChange('cart')}
-        onMenuClick={() => handleViewChange('menu')}
-      />
-      <SubNav selectedCategory={selectedCategory} onCategoryClick={handleCategoryClick} />
+    <div className="min-h-screen bg-gradient-to-br from-red-50 to-white font-inter">
+      {/* Checkered Pattern Background */}
+      <div className="fixed inset-0 opacity-5 pointer-events-none">
+        <div className="h-full w-full bg-checkered-pattern"></div>
+      </div>
       
-      {currentView === 'menu' && (
-        <Menu 
-          menuItems={filteredMenuItems}
-          addToCart={cart.addToCart}
-          cartItems={cart.cartItems}
-          updateQuantity={cart.updateQuantity}
-        />
-      )}
-      
-      {currentView === 'cart' && (
-        <Cart 
-          cartItems={cart.cartItems}
-          updateQuantity={cart.updateQuantity}
-          removeFromCart={cart.removeFromCart}
-          clearCart={cart.clearCart}
-          getTotalPrice={cart.getTotalPrice}
-          onContinueShopping={() => handleViewChange('menu')}
-          onCheckout={() => handleViewChange('checkout')}
-        />
-      )}
-      
-      {currentView === 'checkout' && (
-        <Checkout 
-          cartItems={cart.cartItems}
-          totalPrice={cart.getTotalPrice()}
-          onBack={() => handleViewChange('cart')}
-        />
-      )}
-      
-      {currentView === 'menu' && (
-        <FloatingCartButton 
-          itemCount={cart.getTotalItems()}
+      <div className="relative z-10">
+        <Header 
+          cartItemsCount={cart.getTotalItems()}
           onCartClick={() => handleViewChange('cart')}
+          onMenuClick={() => handleViewChange('menu')}
         />
-      )}
+        <SubNav selectedCategory={selectedCategory} onCategoryClick={handleCategoryClick} />
+        
+        {currentView === 'menu' && (
+          <Menu 
+            menuItems={filteredMenuItems}
+            addToCart={cart.addToCart}
+            cartItems={cart.cartItems}
+            updateQuantity={cart.updateQuantity}
+          />
+        )}
+        
+        {currentView === 'cart' && (
+          <Cart 
+            cartItems={cart.cartItems}
+            updateQuantity={cart.updateQuantity}
+            removeFromCart={cart.removeFromCart}
+            clearCart={cart.clearCart}
+            getTotalPrice={cart.getTotalPrice}
+            onContinueShopping={() => handleViewChange('menu')}
+            onCheckout={() => handleViewChange('checkout')}
+          />
+        )}
+        
+        {currentView === 'checkout' && (
+          <Checkout 
+            cartItems={cart.cartItems}
+            totalPrice={cart.getTotalPrice()}
+            onBack={() => handleViewChange('cart')}
+          />
+        )}
+        
+        {currentView === 'menu' && (
+          <FloatingCartButton 
+            itemCount={cart.getTotalItems()}
+            onCartClick={() => handleViewChange('cart')}
+          />
+        )}
+      </div>
     </div>
   );
 }

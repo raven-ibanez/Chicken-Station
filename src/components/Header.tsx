@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, Menu } from 'lucide-react';
 import { useSiteSettings } from '../hooks/useSiteSettings';
 
 interface HeaderProps {
@@ -12,45 +12,51 @@ const Header: React.FC<HeaderProps> = ({ cartItemsCount, onCartClick, onMenuClic
   const { siteSettings, loading } = useSiteSettings();
 
   return (
-    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-ramen-sesame shadow-sm">
+    <header className="sticky top-0 z-50 bg-white shadow-lg border-b-4 border-red-600">
+      {/* Checkered Pattern Top Border */}
+      <div className="h-2 bg-gradient-to-r from-red-600 via-white to-red-600">
+        <div className="h-full bg-checkered-pattern opacity-20"></div>
+      </div>
+      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-20">
+          {/* Logo and Brand */}
           <button 
             onClick={onMenuClick}
-            className="flex items-center space-x-2 text-ramen-dark hover:text-ramen-red transition-colors duration-200"
+            className="flex items-center space-x-3 text-gray-800 hover:text-red-600 transition-colors duration-200"
           >
-            {loading ? (
-              <div className="w-10 h-10 bg-gray-200 rounded-full animate-pulse" />
-            ) : (
-              <img 
-                src={siteSettings?.site_logo || "/logo.jpg"} 
-                alt={siteSettings?.site_name || "Ramen Yard"}
-                className="w-10 h-10 rounded object-cover ring-2 ring-ramen-gold"
-                onError={(e) => {
-                  e.currentTarget.src = "/logo.jpg";
-                }}
-              />
-            )}
-            <h1 className="text-2xl font-pretendard font-semibold">
+            <div className="relative">
               {loading ? (
-                <div className="w-24 h-6 bg-gray-200 rounded animate-pulse" />
+                <div className="w-12 h-12 bg-gray-200 rounded-full animate-pulse" />
               ) : (
-                "Ramen Yard"
+                <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center">
+                  <span className="text-white text-xl font-bold">🍗</span>
+                </div>
               )}
-            </h1>
+            </div>
+            <div className="text-left">
+              <h1 className="text-2xl font-bold text-red-600 leading-tight">
+                CHICKEN STATION
+              </h1>
+              <p className="text-xs text-gray-600 font-medium">MENU</p>
+            </div>
           </button>
 
-          <div className="flex items-center space-x-2">
+          {/* Cart Button */}
+          <div className="flex items-center space-x-4">
             <button 
               onClick={onCartClick}
-              className="relative p-2 text-gray-700 hover:text-black hover:bg-ramen-cream rounded-full transition-all duration-200"
+              className="relative bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
             >
-              <ShoppingCart className="h-6 w-6" />
-              {cartItemsCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-ramen-red text-white text-xs rounded-full h-5 w-5 flex items-center justify-center animate-bounce-gentle">
-                  {cartItemsCount}
-                </span>
-              )}
+              <div className="flex items-center space-x-2">
+                <ShoppingCart className="h-5 w-5" />
+                <span>Cart</span>
+                {cartItemsCount > 0 && (
+                  <span className="bg-white text-red-600 text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                    {cartItemsCount}
+                  </span>
+                )}
+              </div>
             </button>
           </div>
         </div>

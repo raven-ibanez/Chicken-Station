@@ -92,12 +92,20 @@ const Menu: React.FC<MenuProps> = ({ menuItems, addToCart, cartItems, updateQuan
         onCategoryClick={handleCategoryClick}
       />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="text-center mb-12">
-        <h2 className="text-4xl font-noto font-semibold text-black mb-4">Our Menu</h2>
-        <p className="text-gray-600 max-w-2xl mx-auto">
-          Discover our selection of authentic dim sum, flavorful noodles, and traditional Asian dishes, 
-          all prepared with fresh ingredients and authentic techniques.
-        </p>
+      {/* Menu Header Section */}
+      <div className="relative bg-white rounded-2xl shadow-2xl p-8 mb-12 border-4 border-red-600">
+        {/* Checkered Pattern Background */}
+        <div className="absolute inset-0 opacity-5 rounded-2xl">
+          <div className="h-full w-full bg-checkered-pattern rounded-2xl"></div>
+        </div>
+        
+        <div className="relative text-center">
+          <h2 className="text-4xl md:text-5xl font-bold text-red-600 mb-4">OUR MENU</h2>
+          <p className="text-gray-700 max-w-2xl mx-auto font-medium">
+            Discover our selection of crispy chicken wings, flavorful beverages, and delicious solo meals, 
+            all prepared with fresh ingredients and authentic flavors.
+          </p>
+        </div>
       </div>
 
       {categories.map((category) => {
@@ -107,9 +115,16 @@ const Menu: React.FC<MenuProps> = ({ menuItems, addToCart, cartItems, updateQuan
         
         return (
           <section key={category.id} id={category.id} className="mb-16">
-            <div className="flex items-center mb-8">
-              <span className="text-3xl mr-3">{category.icon}</span>
-              <h3 className="text-3xl font-noto font-medium text-black">{category.name}</h3>
+            <div className="relative bg-white rounded-xl shadow-lg p-6 mb-8 border-2 border-red-100">
+              {/* Checkered Pattern Background */}
+              <div className="absolute inset-0 opacity-5 rounded-xl">
+                <div className="h-full w-full bg-checkered-pattern rounded-xl"></div>
+              </div>
+              
+              <div className="relative flex items-center justify-center">
+                <span className="text-4xl mr-4">{category.icon}</span>
+                <h3 className="text-3xl font-bold text-red-600">{category.name.toUpperCase()}</h3>
+              </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
