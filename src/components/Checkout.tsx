@@ -23,7 +23,6 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, totalPrice, onBack }) =>
   const [partySize, setPartySize] = useState(1);
   const [dineInTime, setDineInTime] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('gcash');
-  const [referenceNumber, setReferenceNumber] = useState('');
   const [notes, setNotes] = useState('');
 
   React.useEffect(() => {
@@ -91,7 +90,7 @@ ${cartItems.map(item => {
 ${serviceType === 'delivery' ? `🛵 DELIVERY FEE:` : ''}
 
 💳 Payment: ${selectedPaymentMethod?.name || paymentMethod}
-📸 Payment Screenshot: Please attach your payment receipt screenshot
+${paymentMethod !== 'cash-on-delivery' ? '📸 Payment Screenshot: Please attach your payment receipt screenshot' : '💰 Payment: Cash on Delivery - Payment will be collected upon delivery'}
 
 ${notes ? `📝 Notes: ${notes}` : ''}
 
@@ -383,45 +382,69 @@ Please confirm this order to proceed. Thank you for choosing Chicken Station! �
                     : 'border-red-300 bg-white text-gray-700 hover:border-red-400'
                 }`}
               >
-                <span className="text-2xl">💳</span>
+                <span className="text-2xl">{method.id === 'cash-on-delivery' ? '💰' : '💳'}</span>
                 <span className="font-medium">{method.name}</span>
               </button>
             ))}
           </div>
 
-          {/* Payment Details with QR Code */}
-          {selectedPaymentMethod && (
+          {/* Payment Details - Different display for Cash on Delivery */}
+          {selectedPaymentMethod && selectedPaymentMethod.id === 'cash-on-delivery' && (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-6">
+              <h3 className="font-medium text-black mb-4">Cash on Delivery</h3>
+              <div className="space-y-2">
+                <p className="text-sm text-gray-700">
+                  💰 Payment will be collected upon delivery
+                </p>
+                <p className="text-xl font-semibold text-black">Amount Due: ₱{totalPrice}</p>
+                <p className="text-xs text-gray-600 mt-2">
+                  Please have exact change ready when receiving your order.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Payment Details with QR Code - For other payment methods */}
+          {selectedPaymentMethod && selectedPaymentMethod.id !== 'cash-on-delivery' && (
             <div className="bg-red-50 rounded-lg p-6 mb-6">
               <h3 className="font-medium text-black mb-4">Payment Details</h3>
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div className="flex-1">
                   <p className="text-sm text-gray-600 mb-1">{selectedPaymentMethod.name}</p>
-                  <p className="font-mono text-black font-medium">{selectedPaymentMethod.account_number}</p>
-                  <p className="text-sm text-gray-600 mb-3">Account Name: {selectedPaymentMethod.account_name}</p>
+                  {selectedPaymentMethod.account_number && (
+                    <p className="font-mono text-black font-medium">{selectedPaymentMethod.account_number}</p>
+                  )}
+                  {selectedPaymentMethod.account_name && (
+                    <p className="text-sm text-gray-600 mb-3">Account Name: {selectedPaymentMethod.account_name}</p>
+                  )}
                   <p className="text-xl font-semibold text-black">Amount: ₱{totalPrice}</p>
                 </div>
-                <div className="flex-shrink-0">
-                  <img 
-                    src={selectedPaymentMethod.qr_code_url} 
-                    alt={`${selectedPaymentMethod.name} QR Code`}
-                    className="w-32 h-32 rounded-lg border-2 border-red-300 shadow-sm"
-                    onError={(e) => {
-                      e.currentTarget.src = 'https://images.pexels.com/photos/8867482/pexels-photo-8867482.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop';
-                    }}
-                  />
-                  <p className="text-xs text-gray-500 text-center mt-2">Scan to pay</p>
-                </div>
+                {selectedPaymentMethod.qr_code_url && (
+                  <div className="flex-shrink-0">
+                    <img 
+                      src={selectedPaymentMethod.qr_code_url} 
+                      alt={`${selectedPaymentMethod.name} QR Code`}
+                      className="w-32 h-32 rounded-lg border-2 border-red-300 shadow-sm"
+                      onError={(e) => {
+                        e.currentTarget.src = 'https://images.pexels.com/photos/8867482/pexels-photo-8867482.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop';
+                      }}
+                    />
+                    <p className="text-xs text-gray-500 text-center mt-2">Scan to pay</p>
+                  </div>
+                )}
               </div>
             </div>
           )}
 
-          {/* Reference Number */}
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <h4 className="font-medium text-black mb-2">📸 Payment Proof Required</h4>
-            <p className="text-sm text-gray-700">
-              After making your payment, please take a screenshot of your payment receipt and attach it when you send your order via Messenger. This helps us verify and process your order quickly.
-            </p>
-          </div>
+          {/* Payment Proof Notice - Only for non-Cash on Delivery */}
+          {selectedPaymentMethod && selectedPaymentMethod.id !== 'cash-on-delivery' && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <h4 className="font-medium text-black mb-2">📸 Payment Proof Required</h4>
+              <p className="text-sm text-gray-700">
+                After making your payment, please take a screenshot of your payment receipt and attach it when you send your order via Messenger. This helps us verify and process your order quickly.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Order Summary */}

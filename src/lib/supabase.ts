@@ -144,9 +144,9 @@ export type Database = {
         Row: {
           id: string;
           name: string;
-          account_number: string;
-          account_name: string;
-          qr_code_url: string;
+          account_number: string | null;
+          account_name: string | null;
+          qr_code_url: string | null;
           active: boolean;
           sort_order: number;
           created_at: string;
@@ -155,9 +155,9 @@ export type Database = {
         Insert: {
           id: string;
           name: string;
-          account_number: string;
-          account_name: string;
-          qr_code_url: string;
+          account_number?: string | null;
+          account_name?: string | null;
+          qr_code_url?: string | null;
           active?: boolean;
           sort_order?: number;
           created_at?: string;
@@ -166,9 +166,9 @@ export type Database = {
         Update: {
           id?: string;
           name?: string;
-          account_number?: string;
-          account_name?: string;
-          qr_code_url?: string;
+          account_number?: string | null;
+          account_name?: string | null;
+          qr_code_url?: string | null;
           active?: boolean;
           sort_order?: number;
           created_at?: string;

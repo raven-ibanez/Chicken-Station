@@ -4,9 +4,9 @@ import { supabase } from '../lib/supabase';
 export interface PaymentMethod {
   id: string;
   name: string;
-  account_number: string;
-  account_name: string;
-  qr_code_url: string;
+  account_number: string | null;
+  account_name: string | null;
+  qr_code_url: string | null;
   active: boolean;
   sort_order: number;
   created_at: string;
@@ -68,9 +68,9 @@ export const usePaymentMethods = () => {
         .insert({
           id: method.id,
           name: method.name,
-          account_number: method.account_number,
-          account_name: method.account_name,
-          qr_code_url: method.qr_code_url,
+          account_number: method.account_number || null,
+          account_name: method.account_name || null,
+          qr_code_url: method.qr_code_url || null,
           active: method.active,
           sort_order: method.sort_order
         })
@@ -93,9 +93,9 @@ export const usePaymentMethods = () => {
         .from('payment_methods')
         .update({
           name: updates.name,
-          account_number: updates.account_number,
-          account_name: updates.account_name,
-          qr_code_url: updates.qr_code_url,
+          account_number: updates.account_number || null,
+          account_name: updates.account_name || null,
+          qr_code_url: updates.qr_code_url || null,
           active: updates.active,
           sort_order: updates.sort_order
         })

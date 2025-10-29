@@ -21,6 +21,8 @@ const PaymentMethodManager: React.FC<PaymentMethodManagerProps> = ({ onBack }) =
     sort_order: 0
   });
 
+  const isCashOnDelivery = formData.id === 'cash-on-delivery' || editingMethod?.id === 'cash-on-delivery';
+
   React.useEffect(() => {
     refetchAll();
   }, []);
@@ -64,15 +66,21 @@ const PaymentMethodManager: React.FC<PaymentMethodManagerProps> = ({ onBack }) =
   };
 
   const handleSaveMethod = async () => {
-    if (!formData.id || !formData.name || !formData.account_number || !formData.account_name || !formData.qr_code_url) {
-      alert('Please fill in all required fields');
+    if (!formData.id || !formData.name) {
+      alert('Please fill in ID and name');
+      return;
+    }
+
+    // For cash on delivery, account details are not required
+    if (!isCashOnDelivery && (!formData.account_number || !formData.account_name || !formData.qr_code_url)) {
+      alert('Please fill in all required fields (account number, account name, and QR code)');
       return;
     }
 
     // Validate ID format (kebab-case)
     const idRegex = /^[a-z0-9]+(-[a-z0-9]+)*$/;
     if (!idRegex.test(formData.id)) {
-      alert('Payment method ID must be in kebab-case format (e.g., "gcash", "bank-transfer")');
+      alert('Payment method ID must be in kebab-case format (e.g., "gcash", "bank-transfer", "cash-on-delivery")');
       return;
     }
 
@@ -182,34 +190,46 @@ const PaymentMethodManager: React.FC<PaymentMethodManagerProps> = ({ onBack }) =
                 </p>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-black mb-2">Account Number/Phone *</label>
-                <input
-                  type="text"
-                  value={formData.account_number}
-                  onChange={(e) => setFormData({ ...formData, account_number: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  placeholder="09XX XXX XXXX or Account: 1234-5678-9012"
-                />
-              </div>
+              {isCashOnDelivery && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                  <p className="text-sm text-blue-800">
+                    💰 Cash on Delivery: No account details or QR code needed. Payment will be collected upon delivery.
+                  </p>
+                </div>
+              )}
 
-              <div>
-                <label className="block text-sm font-medium text-black mb-2">Account Name *</label>
-                <input
-                  type="text"
-                  value={formData.account_name}
-                  onChange={(e) => setFormData({ ...formData, account_name: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  placeholder="M&C Bakehouse"
-                />
-              </div>
+              {!isCashOnDelivery && (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-black mb-2">Account Number/Phone *</label>
+                    <input
+                      type="text"
+                      value={formData.account_number}
+                      onChange={(e) => setFormData({ ...formData, account_number: e.target.value })}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      placeholder="09XX XXX XXXX or Account: 1234-5678-9012"
+                    />
+                  </div>
 
-              <div>
-                <ImageUpload
-                  currentImage={formData.qr_code_url}
-                  onImageChange={(imageUrl) => setFormData({ ...formData, qr_code_url: imageUrl || '' })}
-                />
-              </div>
+                  <div>
+                    <label className="block text-sm font-medium text-black mb-2">Account Name *</label>
+                    <input
+                      type="text"
+                      value={formData.account_name}
+                      onChange={(e) => setFormData({ ...formData, account_name: e.target.value })}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      placeholder="M&C Bakehouse"
+                    />
+                  </div>
+
+                  <div>
+                    <ImageUpload
+                      currentImage={formData.qr_code_url}
+                      onImageChange={(imageUrl) => setFormData({ ...formData, qr_code_url: imageUrl || '' })}
+                    />
+                  </div>
+                </>
+              )}
 
               <div>
                 <label className="block text-sm font-medium text-black mb-2">Sort Order</label>
@@ -294,20 +314,30 @@ const PaymentMethodManager: React.FC<PaymentMethodManagerProps> = ({ onBack }) =
                     className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200"
                   >
                     <div className="flex items-center space-x-4">
-                      <div className="flex-shrink-0">
-                        <img
-                          src={method.qr_code_url}
-                          alt={`${method.name} QR Code`}
-                          className="w-16 h-16 rounded-lg border border-gray-300 object-cover"
-                          onError={(e) => {
-                            e.currentTarget.src = 'https://images.pexels.com/photos/8867482/pexels-photo-8867482.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop';
-                          }}
-                        />
-                      </div>
+                      {method.qr_code_url && (
+                        <div className="flex-shrink-0">
+                          <img
+                            src={method.qr_code_url}
+                            alt={`${method.name} QR Code`}
+                            className="w-16 h-16 rounded-lg border border-gray-300 object-cover"
+                            onError={(e) => {
+                              e.currentTarget.src = 'https://images.pexels.com/photos/8867482/pexels-photo-8867482.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop';
+                            }}
+                          />
+                        </div>
+                      )}
+                      {method.id === 'cash-on-delivery' && (
+                        <div className="flex-shrink-0">
+                          <div className="w-16 h-16 rounded-lg border border-gray-300 bg-green-100 flex items-center justify-center">
+                            <span className="text-2xl">💰</span>
+                          </div>
+                        </div>
+                      )}
                       <div>
                         <h3 className="font-medium text-black">{method.name}</h3>
-                        <p className="text-sm text-gray-600">{method.account_number}</p>
-                        <p className="text-sm text-gray-500">Account: {method.account_name}</p>
+                        {method.account_number && <p className="text-sm text-gray-600">{method.account_number}</p>}
+                        {method.account_name && <p className="text-sm text-gray-500">Account: {method.account_name}</p>}
+                        {method.id === 'cash-on-delivery' && <p className="text-sm text-gray-600">Payment upon delivery</p>}
                         <p className="text-xs text-gray-400">ID: {method.id} • Order: #{method.sort_order}</p>
                       </div>
                     </div>
